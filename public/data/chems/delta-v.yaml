@@ -1,0 +1,127 @@
+chems:
+  Tricordrazine:
+    description: A general-purpose medicine that heals all damage types at a slow rate.
+    overdose: 30
+    reactions:
+      - inputs:
+          Dylovene: 1
+          Inaprovaline: 1
+        output: 2
+
+  Inaprovaline:
+    description: Stabilizes critical patients by reducing further damage and slowing bleeding.
+    overdose: 60
+    reactions:
+      - inputs:
+          Oxygen: 1
+          Carbon: 1
+          Sugar: 1
+        output: 3
+
+  Dylovene:
+    description: An anti-toxin medicine that heals toxin damage over time.
+    overdose: 30
+    reactions:
+      - inputs:
+          Silicon: 1
+          Nitrogen: 2
+          Potassium: 1
+        output: 3
+
+  Bicaridine:
+    description: Heals brute damage such as cuts, bruises and broken bones.
+    overdose: 30
+    reactions:
+      - inputs:
+          Inaprovaline: 1
+          Carbon: 1
+        output: 2
+
+  Kelotane:
+    description: Treats burn damage including laser wounds and acid burns.
+    overdose: 30
+    reactions:
+      - inputs:
+          Silicon: 1
+          Carbon: 1
+        output: 2
+
+  Dexalin:
+    description: Treats oxygen deprivation damage. Requires heating to synthesize.
+    overdose: 30
+    reactions:
+      - inputs:
+          Oxygen: 2
+          Plasma: 0.1
+        output: 1
+        conditions:
+          heat: 321
+
+  Dexalin Plus:
+    description: An advanced oxygen deprivation treatment. More effective than Dexalin.
+    overdose: 15
+    reactions:
+      - inputs:
+          Dexalin: 1
+          Carbon: 1
+          Iron: 1
+        output: 3
+        conditions:
+          mix: true
+
+  Napalm:
+    description: A volatile incendiary compound. Ignites on contact with high temperatures.
+    reactions:
+      - inputs:
+          Phosphorus: 1
+          Ethanol: 1
+          Welding Fuel: 1
+        output: 3
+        conditions:
+          heat: 374
+          mix: true
+
+  Cryostylane:
+    description: A cryogenic chemical that rapidly lowers body temperature.
+    overdose: 20
+    reactions:
+      - inputs:
+          Nitrogen: 1
+          Water: 1
+        output: 2
+        conditions:
+          cool: 273
+
+  Rezadone:
+    description: Treats cellular damage caused by cloning. Requires a plasma catalyst.
+    overdose: 30
+    reactions:
+      - inputs:
+          Cryptobiolin: 1
+          Copper: 1
+          Spaceacillin: 1
+        output: 3
+        conditions:
+          catalyst: Plasma
+
+  Omnizine:
+    description: A powerful medicine that heals all damage types simultaneously.
+    overdose: 30
+    reactions:
+      - inputs:
+          Tricordrazine: 1
+          Bicaridine: 1
+          Kelotane: 1
+          Dylovene: 1
+        output: 4
+
+  Leporazine:
+    description: Regulates body temperature, preventing both hyper- and hypothermia.
+    overdose: 30
+    reactions:
+      - inputs:
+          Silicon: 1
+          Copper: 1
+        output: 2
+        conditions:
+          heat: 374

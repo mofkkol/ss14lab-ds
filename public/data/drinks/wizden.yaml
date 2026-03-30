@@ -1,0 +1,163 @@
+drinks:
+  Screwdriver:
+    description: A classic mix of vodka and orange juice.
+    reactions:
+      - inputs:
+          Vodka: 2
+          Orange Juice: 1
+        output: 3
+
+  Gin and Tonic:
+    description: A refreshing cocktail of gin and tonic water.
+    reactions:
+      - inputs:
+          Gin: 2
+          Tonic Water: 1
+        output: 3
+
+  Bloody Mary:
+    description: A savory cocktail made with vodka and tomato juice.
+    reactions:
+      - inputs:
+          Vodka: 1
+          Tomato Juice: 2
+          Lime Juice: 1
+        output: 4
+
+  Margarita:
+    description: A tequila-based cocktail with lime.
+    reactions:
+      - inputs:
+          Tequila: 2
+          Lime Juice: 1
+          Orange Juice: 1
+        output: 4
+
+  Long Island Iced Tea:
+    description: A dangerously strong mix of spirits that tastes deceptively light.
+    reactions:
+      - inputs:
+          Vodka: 1
+          Gin: 1
+          Tequila: 1
+          Rum: 1
+          Cola: 1
+        output: 5
+
+  Cuba Libre:
+    description: Rum and cola with a squeeze of lime.
+    reactions:
+      - inputs:
+          Rum: 2
+          Cola: 1
+          Lime Juice: 1
+        output: 4
+
+  Whiskey Sour:
+    description: A balanced cocktail with whiskey and lemon juice.
+    reactions:
+      - inputs:
+          Whiskey: 2
+          Lemon Juice: 1
+          Sugar: 1
+        output: 4
+
+  Mojito:
+    description: A refreshing Cuban cocktail with rum and lime.
+    reactions:
+      - inputs:
+          Rum: 2
+          Lime Juice: 1
+          Sugar: 1
+          Soda Water: 1
+        output: 5
+
+  Tequila Sunrise:
+    description: A vibrant layered cocktail of tequila and orange juice.
+    reactions:
+      - inputs:
+          Tequila: 2
+          Orange Juice: 2
+          Grenadine: 1
+        output: 5
+
+  B-52:
+    description: A layered shot of coffee liqueur, Irish cream and cognac.
+    reactions:
+      - inputs:
+          Coffee Liqueur: 1
+          Irish Cream: 1
+          Cognac: 1
+        output: 3
+
+  Pan-Galactic Gargle Blaster:
+    description: The best drink in existence. Like having your brains smashed out by a gold brick.
+    reactions:
+      - inputs:
+          Vodka: 1
+          Gin: 1
+          Whiskey: 1
+          Cognac: 1
+          Lime Juice: 1
+        output: 5
+
+  Bahama Mama:
+    description: A tropical cocktail with rum, coconut and citrus flavors.
+    reactions:
+      - inputs:
+          Rum: 2
+          Orange Juice: 1
+          Lime Juice: 1
+          Grenadine: 1
+        output: 5
+
+  Irish Coffee:
+    description: Coffee with a shot of whiskey and cream.
+    reactions:
+      - inputs:
+          Coffee: 2
+          Whiskey: 1
+          Cream: 1
+        output: 4
+
+  White Russian:
+    description: A creamy cocktail of vodka, coffee liqueur and cream.
+    reactions:
+      - inputs:
+          Vodka: 1
+          Coffee Liqueur: 1
+          Cream: 1
+        output: 3
+
+  Black Russian:
+    description: A simple mix of vodka and coffee liqueur.
+    reactions:
+      - inputs:
+          Vodka: 2
+          Coffee Liqueur: 1
+        output: 3
+
+  Rum and Cola:
+    description: A simple, classic combination.
+    reactions:
+      - inputs:
+          Rum: 2
+          Cola: 1
+        output: 3
+
+  Vodka Tonic:
+    description: Vodka with tonic water. Simple and effective.
+    reactions:
+      - inputs:
+          Vodka: 2
+          Tonic Water: 1
+        output: 3
+
+  Daiquiri:
+    description: A classic rum cocktail with lime and sugar.
+    reactions:
+      - inputs:
+          Rum: 2
+          Lime Juice: 1
+          Sugar: 1
+        output: 4

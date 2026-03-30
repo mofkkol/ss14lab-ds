@@ -1,17 +1,123 @@
 ---
-
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Home" description="Community reference site for Space Station 14 players">
+  <style is:global>
+    .hero {
+      padding: 4rem 0 3rem;
+      border-bottom: 0.5px solid var(--color-border-secondary);
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    .issue-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      padding: 5px 10px;
+      border-radius: var(--border-radius-md);
+      border: 0.5px solid var(--color-border-tertiary);
+      background: var(--color-background-primary);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .issue-btn:hover {
+      border-color: var(--color-border-secondary);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+    }
+    .hero-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-success);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .hero-title {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 0.75rem;
+    }
+    .hero-title span { color: var(--color-text-success); }
+    .hero-desc {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 640px) {
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .tool-card {
+      display: block;
+      padding: 28px 18px;
+      border-radius: var(--border-radius-lg);
+      border: 0.5px solid var(--color-border-secondary);
+      background: var(--color-background-secondary);
+      text-decoration: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .tool-card:hover {
+      border-color: var(--color-border-success);
+      background: var(--color-background-success);
+      text-decoration: none;
+    }
+    .tool-card-name {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-success);
+      margin-bottom: 4px;
+    }
+    .tool-card-desc {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+  </style>
+
+  <div class="hero">
+    <a href="https://github.com/LunarOccultist/ss14lab/issues" target="_blank" rel="noopener" class="issue-btn">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      report an issue
+    </a>
+    <div class="hero-label">// ss14lab.com</div>
+    <h1 class="hero-title">Space Station <span>14</span> Lab</h1>
+    <p class="hero-desc">
+      Community reference for SS14 players. Chem guides, food &amp; drink recipes,
+      and interactive tools — filtered by server variant.
+    </p>
+  </div>
+
+  <div class="tools-grid">
+    <a href="/chems" class="tool-card">
+      <div class="tool-card-name">🧪 Chems</div>
+      <div class="tool-card-desc">Chemical synthesis &amp; base reagent calculator</div>
+    </a>
+    <a href="/drinks" class="tool-card">
+      <div class="tool-card-name">🍹 Drinks</div>
+      <div class="tool-card-desc">Bartending recipes &amp; ingredient breakdowns</div>
+    </a>
+    <a href="/food" class="tool-card">
+      <div class="tool-card-name">🍔 Food</div>
+      <div class="tool-card-desc">Cooking recipes &amp; nutrition values</div>
+    </a>
+  </div>
+</BaseLayout>

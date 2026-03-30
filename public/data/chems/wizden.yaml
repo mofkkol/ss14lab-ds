@@ -1,0 +1,432 @@
+chems:
+  Bicaridine:
+    description: An analgesic highly effective at treating brute damage. Slows bleeding.
+    overdose: 30
+    effects:
+      heals:
+        brute: 2
+      deals:
+        asphyxiation: 0.5
+        poison: 1.5
+      conditions:
+        - "deals damage above 15u"
+        - "causes jittering above 15u"
+        - "causes vomiting above 30u"
+    reactions:
+      - inputs:
+          Inaprovaline: 1
+          Carbon: 1
+        output: 2
+
+  Tricordrazine:
+    description: A wide-spectrum stimulant that treats minor damage of all types. Only works below 50 total damage.
+    overdose: 30
+    effects:
+      heals:
+        brute: 1
+        poison: 0.5
+        heat: 0.33
+        shock: 0.33
+        cold: 0.33
+      conditions:
+        - "only works below 50 total damage"
+    reactions:
+      - inputs:
+          Inaprovaline: 1
+          Dylovene: 1
+        output: 2
+
+  Dylovene:
+    description: A broad-spectrum anti-toxin that treats toxin damage in the blood stream.
+    overdose: 20
+    effects:
+      heals:
+        poison: 1
+      deals:
+        brute: 2
+      conditions:
+        - "deals damage above 20u"
+        - "causes vomiting above 20u"
+        - "causes drunkenness above 15u"
+    reactions:
+      - inputs:
+          Silicon: 1
+          Nitrogen: 1
+          Potassium: 1
+        output: 3
+
+  Inaprovaline:
+    description: Stabilizes critical patients by slowing further damage and reducing bleeding.
+    overdose: 60
+    reactions:
+      - inputs:
+          Oxygen: 1
+          Carbon: 1
+          Sugar: 1
+        output: 3
+
+  Kelotane:
+    description: Treats burn damage including heat, shock, and cold.
+    overdose: 30
+    effects:
+      heals:
+        heat: 0.33
+        shock: 0.33
+        cold: 0.33
+      conditions:
+        - "greatly increases thirst above 30u"
+    reactions:
+      - inputs:
+          Silicon: 1
+          Carbon: 1
+        output: 2
+
+  Dermaline:
+    description: An advanced burn treatment more effective than Kelotane.
+    overdose: 10
+    effects:
+      heals:
+        heat: 1.5
+        shock: 1.5
+        cold: 1.5
+      deals:
+        brute: 0.5
+        asphyxiation: 1
+        cold: 2
+      conditions:
+        - "deals damage above 10u"
+        - "causes jittering above 10u"
+    reactions:
+      - inputs:
+          Kelotane: 1
+          Oxygen: 1
+          Phosphorus: 1
+        output: 3
+
+  Dexalin:
+    description: Treats minor oxygen deprivation and bloodloss.
+    overdose: 20
+    effects:
+      heals:
+        asphyxiation: 1
+        bloodloss: 0.5
+      deals:
+        asphyxiation: 3
+        cold: 1
+      conditions:
+        - "deals damage above 20u"
+    reactions:
+      - inputs:
+          Oxygen: 2
+          Plasma: 1
+        output: 3
+        conditions:
+          catalyst: Plasma
+
+  Dexalin Plus:
+    description: Advanced treatment for extreme oxygen deprivation and bloodloss.
+    overdose: 25
+    effects:
+      heals:
+        asphyxiation: 3.5
+        bloodloss: 3
+      deals:
+        asphyxiation: 5
+        cold: 3
+      conditions:
+        - "deals damage above 25u"
+        - "flushes heartbreaker toxin"
+    reactions:
+      - inputs:
+          Dexalin: 1
+          Carbon: 1
+          Iron: 1
+        output: 3
+
+  Epinephrine:
+    description: Stabilizes critical patients. Heals all damage types when in critical condition.
+    overdose: 20
+    effects:
+      heals:
+        brute: 0.5
+        burn: 0.5
+        asphyxiation: 3
+        poison: 0.5
+      deals:
+        asphyxiation: 1
+        poison: 1
+      conditions:
+        - "heals only in critical condition"
+        - "deals damage above 20u"
+    reactions:
+      - inputs:
+          Phenol: 1
+          Acetone: 1
+          Oxygen: 1
+          Chlorine: 1
+          Hydrogen: 1
+        output: 5
+
+  Charcoal:
+    description: Cleanses the bloodstream of chemicals and heals toxin damage.
+    effects:
+      heals:
+        poison: 1
+      conditions:
+        - "purges other chemicals from bloodstream"
+    reactions:
+      - inputs:
+          Carbon: 1
+          Ash: 1
+        output: 1
+
+  Arithrazine:
+    description: Treats severe radiation poisoning. Causes minor brute damage.
+    effects:
+      heals:
+        radiation: 3
+      deals:
+        brute: 0.5
+    reactions:
+      - inputs:
+          Hyronalin: 1
+          Hydrogen: 1
+        output: 2
+
+  Hyronalin:
+    description: Treats radiation damage.
+    overdose: 30
+    effects:
+      heals:
+        radiation: 1
+      deals:
+        heat: 2
+      conditions:
+        - "deals damage above 30u"
+        - "causes vomiting"
+    reactions:
+      - inputs:
+          Radium: 1
+          Dylovene: 1
+        output: 2
+
+  Cryoxadone:
+    description: Heals all damage types rapidly, but only works under 150K (cryo cells).
+    effects:
+      heals:
+        airloss: 6
+        brute: 4
+        burn: 6
+        poison: 4
+      conditions:
+        - "only works below 150K (cryo cells)"
+    reactions:
+      - inputs:
+          Dexalin: 1
+          Water: 1
+          Oxygen: 1
+        output: 3
+
+  Leporazine:
+    description: Stabilizes body temperature and rapidly cures cold damage.
+    effects:
+      heals:
+        cold: 4
+      conditions:
+        - "stabilizes body temperature"
+        - "prevents cryogenic treatment"
+    reactions:
+      - inputs:
+          Copper: 1
+          Fersilicite: 1
+          Plasma: 1
+        output: 2
+        conditions:
+          catalyst: Plasma
+
+  Ethylredoxrazine:
+    description: Purges ethanol from the bloodstream. Sobers you up.
+    reactions:
+      - inputs:
+          Oxygen: 1
+          Dylovene: 1
+          Carbon: 1
+        output: 3
+
+  Omnizine:
+    description: A powerful medicine that heals all damage types simultaneously.
+    overdose: 30
+    effects:
+      heals:
+        brute: 1
+        burn: 1
+        poison: 1
+        airloss: 1
+    reactions:
+      - inputs:
+          Tricordrazine: 1
+          Bicaridine: 1
+          Kelotane: 1
+          Dylovene: 1
+        output: 4
+
+  Bruizine:
+    description: Wildly effective at treating blunt force trauma.
+    overdose: 10
+    effects:
+      heals:
+        blunt: 2.25
+      deals:
+        poison: 2.5
+      conditions:
+        - "deals damage above 10.5u"
+    reactions:
+      - inputs:
+          Bicaridine: 1
+          Lithium: 0.9
+          Sugar: 1
+        output: 2
+
+  Lacerinol:
+    description: Boosts collagen synthesis to heal slash trauma.
+    overdose: 12
+    effects:
+      heals:
+        slash: 2
+      deals:
+        cold: 1.5
+      conditions:
+        - "deals damage above 12u"
+    reactions:
+      - inputs:
+          Bicaridine: 1
+          Benzene: 1
+        output: 2
+        conditions:
+          heat: 335
+
+  Puncturase:
+    description: Helps rebuild trauma caused by piercing damage.
+    overdose: 12
+    effects:
+      heals:
+        piercing: 2.5
+      deals:
+        blunt: 3
+      conditions:
+        - "deals damage above 12u"
+    reactions:
+      - inputs:
+          Bicaridine: 1
+          Hydroxide: 1
+        output: 2
+        conditions:
+          heat: 325
+
+  Phenol:
+    description: A precursor to medicines. No healing properties on its own.
+    reactions:
+      - inputs:
+          Hydroxide: 1
+          Benzene: 1
+        output: 2
+
+  Acetone:
+    description: A precursor chemical used to make Epinephrine.
+    reactions:
+      - inputs:
+          Oil: 1
+          Welding Fuel: 1
+          Oxygen: 1
+        output: 2
+
+  Hydroxide:
+    description: A strong alkaline precursor chemical.
+    reactions:
+      - inputs:
+          Oxygen: 1
+          Hydrogen: 1
+        output: 2
+        conditions:
+          heat: 310
+
+  Benzene:
+    description: An aromatic toxic precursor chemical.
+    reactions:
+      - inputs:
+          Hydrogen: 1
+          Carbon: 1
+        output: 1
+        conditions:
+          heat: 310
+
+  Fersilicite:
+    description: An intermetallic compound used to make Leporazine.
+    reactions:
+      - inputs:
+          Iron: 1
+          Silicon: 1
+        output: 2
+        conditions:
+          heat: 310
+
+  Ammonia:
+    description: A caustic precursor chemical.
+    reactions:
+      - inputs:
+          Hydrogen: 3
+          Nitrogen: 1
+        output: 4
+
+  Cryptobiolin:
+    description: Causes confusion and drunkenness. Precursor for Spaceacillin.
+    reactions:
+      - inputs:
+          Potassium: 1
+          Oxygen: 1
+          Sugar: 1
+        output: 3
+
+  Ash:
+    description: A light grey powdery residue. Precursor for Charcoal and Lye.
+    reactions:
+      - inputs:
+          Oil: 1
+        output: 1
+        conditions:
+          heat: 520
+
+  Sigynate:
+    description: A thick pink syrup that neutralizes acids and soothes caustic damage.
+    overdose: 30
+    effects:
+      heals:
+        caustic: 1.25
+      deals:
+        heat: 1
+      conditions:
+        - "deals damage above 16u"
+        - "causes jittering above 20u"
+    reactions:
+      - inputs:
+          Sodium Carbonate: 1
+          Sodium Hydroxide: 1
+          Kelotane: 1
+          Water: 1
+          Sugar: 1
+        output: 4
+        conditions:
+          heat: 370
+
+  Doxarubixadone:
+    description: Heals cellular damage, but only works in cryogenic temperatures.
+    effects:
+      heals:
+        cellular: 2
+      conditions:
+        - "only works below 150K (cryo cells)"
+    reactions:
+      - inputs:
+          Cryoxadone: 1
+          Unstable Mutagen: 1
+        output: 2

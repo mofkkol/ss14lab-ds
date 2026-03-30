@@ -1,0 +1,290 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Drinks"
+  description="Bartending recipes and drink mixing guide for Space Station 14"
+>
+  <style is:global>
+    .page-header { margin-bottom: 1.75rem; }
+    .page-header h1 { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+    .page-header p { font-size: 12px; color: var(--color-text-tertiary); }
+
+    .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .controls select, .controls input, .controls .ctrl-btn {
+      font-family: var(--font-mono); font-size: 13px; padding: 7px 10px;
+      border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary);
+      background: var(--color-background-primary); color: var(--color-text-primary); outline: none; height: 34px;
+    }
+    .controls select:focus, .controls input:focus { border-color: var(--color-border-primary); }
+    .controls input[type=number] { width: 60px; }
+    .unit-label { font-size: 13px; color: var(--color-text-secondary); }
+    .ctrl-btn { font-size: 11px; background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; margin-left: auto; }
+    .ctrl-btn:hover { background: var(--color-background-primary); color: var(--color-text-primary); }
+
+    .tree { display: flex; flex-direction: column; }
+    .node-wrap { display: flex; flex-direction: column; }
+    .node-row { display: flex; align-items: center; gap: 6px; }
+    .node-line {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 7px 12px;
+      border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary);
+      background: var(--color-background-primary); flex: 1; margin-bottom: 3px;
+    }
+    .node-line.root { border-color: var(--color-border-info); background: var(--color-background-info); }
+    .node-line.synthesized { border-color: var(--color-border-success); background: var(--color-background-success); cursor: pointer; }
+    .node-line.synthesized:hover { filter: brightness(0.96); }
+    .node-line.base { background: var(--color-background-secondary); border-color: var(--color-border-tertiary); }
+
+    .node-toggle { font-size: 11px; font-family: var(--font-mono); color: var(--color-text-success); opacity: 0.6; cursor: pointer; user-select: none; flex-shrink: 0; padding: 0 2px; }
+    .node-toggle:hover { opacity: 1; }
+
+    .node-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); flex: 1; min-width: 80px; }
+    .node-line.root .node-name { color: var(--color-text-info); }
+    .node-line.synthesized .node-name { color: var(--color-text-success); }
+    .node-line.base .node-name { color: var(--color-text-secondary); }
+
+    .node-amount { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-tertiary); white-space: nowrap; }
+    .node-line.root .node-amount { color: var(--color-text-info); opacity: 0.8; }
+    .node-line.synthesized .node-amount { color: var(--color-text-success); opacity: 0.8; }
+
+    .badge { font-size: 10px; padding: 2px 7px; border-radius: 100px; font-family: var(--font-mono); white-space: nowrap; }
+    .badge-synth { background: var(--color-background-success); color: var(--color-text-success); border: 0.5px solid var(--color-border-success); }
+    .badge-base { background: var(--color-background-secondary); color: var(--color-text-tertiary); border: 0.5px solid var(--color-border-tertiary); }
+
+    .children-wrap { display: flex; flex-direction: column; padding-left: 26px; position: relative; }
+    .children-wrap > .node-wrap { position: relative; }
+    .children-wrap > .node-wrap::after { content: ''; position: absolute; left: -17px; top: 0; bottom: 0; width: 1px; background: var(--color-border-secondary); pointer-events: none; }
+    .children-wrap > .node-wrap:last-child::after { bottom: auto; height: 17px; }
+    .children-wrap > .node-wrap::before { content: ''; position: absolute; left: -17px; top: 16px; width: 13px; height: 1px; background: var(--color-border-secondary); pointer-events: none; }
+
+    .calc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 860px) { .calc-layout { grid-template-columns: 1fr; } }
+    .calc-left { min-width: 0; }
+    .calc-right { min-width: 0; }
+
+    .info-block { padding: 12px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); margin-bottom: 10px; }
+    .info-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-item { flex: 1; }
+    .info-label { font-size: 10px; color: var(--color-text-tertiary); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+    .info-value { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
+    .info-value-muted { color: var(--color-text-tertiary); font-style: italic; }
+
+    .section-label { font-size: 11px; color: var(--color-text-tertiary); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .summary-block { padding: 12px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); margin-bottom: 10px; }
+    .base-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+    .base-item { display: flex; flex-direction: column; gap: 2px; }
+    .base-item-name { font-size: 12px; color: var(--color-text-secondary); }
+    .base-item-val { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+
+    .steps-list { display: flex; flex-direction: column; gap: 6px; }
+    .step-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); }
+    .step-num { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); min-width: 20px; padding-top: 1px; }
+    .step-content { flex: 1; }
+    .step-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+    .step-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+    .empty { font-size: 13px; color: var(--color-text-tertiary); padding: 1rem 0; }
+    .loading { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-tertiary); padding: 1rem 0; }
+    .error-msg { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-danger); padding: 1rem 0; }
+  </style>
+
+  <div class="page-header">
+    <h1>drinks</h1>
+    <p>Select a drink and unit amount to see ingredients and mixing steps.</p>
+  </div>
+
+  <div class="controls">
+    <select id="drink-select"><option value="">loading...</option></select>
+    <input type="number" id="units" value="20" min="1" max="100" step="1" />
+    <span class="unit-label">u</span>
+    <button class="ctrl-btn" id="toggle-all">collapse all</button>
+  </div>
+  <div id="status" class="loading">loading drink data...</div>
+  <div class="calc-layout" id="calc-layout" style="display:none">
+    <div class="calc-left">
+      <div class="tree" id="tree"></div>
+    </div>
+    <div class="calc-right">
+      <div id="info-panel"></div>
+      <div id="summary"></div>
+    </div>
+  </div>
+
+  <script>
+    import { load as yamlLoad } from 'js-yaml';
+    import { getServer } from '../scripts/server-store';
+    import { buildTree, collectBases, collectSteps } from '../scripts/chem-tree';
+    import type { ChemDB, TreeNode } from '../scripts/chem-tree';
+
+    let DRINKS: ChemDB = {};
+    let collapseState: Record<string, boolean> = {};
+    let toggleAllState = false;
+
+    async function loadDrinks(server: string) {
+      const statusEl = document.getElementById('status')!;
+      const sel = document.getElementById('drink-select') as HTMLSelectElement;
+      statusEl.className = 'loading';
+      statusEl.textContent = `loading ${server} drink data...`;
+      statusEl.style.display = '';
+      document.getElementById('calc-layout')!.style.display = 'none';
+      sel.innerHTML = '<option value="">loading...</option>';
+
+      try {
+        const res = await fetch(`/data/drinks/${server}.yaml`);
+        if (!res.ok) throw new Error(`No data for server "${server}" (${res.status})`);
+        DRINKS = ((yamlLoad(await res.text()) as { drinks: ChemDB } | null)?.drinks) ?? {};
+
+        const names = Object.keys(DRINKS).sort();
+        sel.innerHTML = '<option value="">— select a drink —</option>';
+        names.forEach((name) => { const o = document.createElement('option'); o.value = name; o.textContent = name; sel.appendChild(o); });
+
+        const params = new URLSearchParams(window.location.search);
+        const drinkParam = params.get('drink');
+        if (drinkParam && DRINKS[drinkParam]) sel.value = drinkParam;
+        const unitsParam = params.get('units');
+        if (unitsParam) { const p = parseInt(unitsParam, 10); if (p >= 1 && p <= 100) (document.getElementById('units') as HTMLInputElement).value = String(p); }
+
+        statusEl.style.display = 'none';
+        document.getElementById('calc-layout')!.style.display = '';
+        render();
+      } catch (err) {
+        statusEl.className = 'error-msg';
+        statusEl.textContent = String(err);
+        document.getElementById('calc-layout')!.style.display = 'none';
+      }
+    }
+
+    function buildNodeEl(node: TreeNode): HTMLElement {
+      const wrap = document.createElement('div'); wrap.className = 'node-wrap';
+      const isRoot = node.depth === 0;
+      const isMidSynth = !isRoot && node.synthesized;
+      const key = `${node.name}_${node.depth}`;
+      const collapsed = collapseState[key] || false;
+
+      const nodeRow = document.createElement('div'); nodeRow.className = 'node-row';
+      const line = document.createElement('div');
+      line.className = `node-line${isRoot ? ' root' : isMidSynth ? ' synthesized' : ' base'}`;
+
+      let toggleEl: HTMLElement | null = null;
+      if (isMidSynth) {
+        toggleEl = document.createElement('span'); toggleEl.className = 'node-toggle';
+        toggleEl.textContent = collapsed ? '▶' : '▼'; toggleEl.dataset.key = key;
+        line.appendChild(toggleEl);
+      }
+
+      const nameEl = document.createElement('span'); nameEl.className = 'node-name'; nameEl.textContent = node.name;
+      const amtEl = document.createElement('span'); amtEl.className = 'node-amount'; amtEl.textContent = `${parseFloat(node.amount.toFixed(2))}u`;
+      const badge = document.createElement('span');
+      badge.className = `badge ${isRoot ? '' : isMidSynth ? 'badge-synth' : 'badge-base'}`;
+      badge.textContent = isRoot ? 'target' : isMidSynth ? 'mixed' : 'ingredient';
+
+      line.appendChild(nameEl); line.appendChild(amtEl); line.appendChild(badge);
+      nodeRow.appendChild(line); wrap.appendChild(nodeRow);
+
+      if (node.children.length > 0) {
+        const cw = document.createElement('div'); cw.className = 'children-wrap';
+        cw.style.display = collapsed ? 'none' : 'flex';
+        const synths = node.children.filter((c) => c.synthesized);
+        const bases = node.children.filter((c) => !c.synthesized);
+        [...synths, ...bases].forEach((c) => cw.appendChild(buildNodeEl(c)));
+        wrap.appendChild(cw);
+
+        if (isMidSynth && toggleEl) {
+          const toggle = toggleEl; const childWrap = cw;
+          const doToggle = () => {
+            const nowCollapsed = childWrap.style.display === 'none';
+            childWrap.style.display = nowCollapsed ? 'flex' : 'none';
+            toggle.textContent = nowCollapsed ? '▼' : '▶';
+            collapseState[key] = !nowCollapsed;
+          };
+          toggle.addEventListener('click', (e) => { e.stopPropagation(); doToggle(); });
+          line.addEventListener('click', doToggle);
+        }
+      }
+      return wrap;
+    }
+
+    function setAllCollapsed(val: boolean) {
+      document.querySelectorAll<HTMLElement>('.node-toggle').forEach((t) => {
+        const k = t.dataset.key!;
+        const cw = t.closest('.node-wrap')?.querySelector<HTMLElement>('.children-wrap');
+        if (!cw) return;
+        cw.style.display = val ? 'none' : 'flex';
+        t.textContent = val ? '▶' : '▼';
+        if (k) collapseState[k] = val;
+      });
+      toggleAllState = val;
+      document.getElementById('toggle-all')!.textContent = val ? 'expand all' : 'collapse all';
+    }
+
+    document.getElementById('toggle-all')!.addEventListener('click', () => setAllCollapsed(!toggleAllState));
+
+    function render() {
+      const drinkName = (document.getElementById('drink-select') as HTMLSelectElement).value;
+      const units = Math.max(1, parseInt((document.getElementById('units') as HTMLInputElement).value) || 1);
+      const treeEl = document.getElementById('tree')!;
+      const summaryEl = document.getElementById('summary')!;
+      const infoPanel = document.getElementById('info-panel')!;
+
+      collapseState = {}; toggleAllState = false;
+      (document.getElementById('toggle-all') as HTMLButtonElement).textContent = 'collapse all';
+
+      if (!drinkName || !DRINKS[drinkName]) {
+        treeEl.innerHTML = '<div class="empty">Select a drink to begin.</div>';
+        summaryEl.innerHTML = ''; infoPanel.innerHTML = '';
+        return;
+      }
+
+      const entry = DRINKS[drinkName];
+      const tree = buildTree(drinkName, units, 0, new Set(), DRINKS);
+      if (!tree) return;
+
+      treeEl.innerHTML = '';
+      treeEl.appendChild(buildNodeEl(tree));
+
+      infoPanel.innerHTML = '';
+      const ib = document.createElement('div'); ib.className = 'info-block';
+      ib.innerHTML = `
+        <div class="info-row"><div class="info-item">
+          <div class="info-label">description</div>
+          <div class="info-value${entry.description ? '' : ' info-value-muted'}">${entry.description || 'No description available.'}</div>
+        </div></div>`;
+      infoPanel.appendChild(ib);
+
+      summaryEl.innerHTML = '';
+
+      const bases: Record<string, number> = {};
+      collectBases(tree, bases);
+      const baseKeys = Object.keys(bases);
+      if (baseKeys.length > 0) {
+        const block = document.createElement('div'); block.className = 'summary-block';
+        block.innerHTML = '<div class="section-label">ingredients needed</div>';
+        const grid = document.createElement('div'); grid.className = 'base-grid';
+        baseKeys.forEach((n) => { grid.innerHTML += `<div class="base-item"><span class="base-item-name">${n}</span><span class="base-item-val">${parseFloat(bases[n].toFixed(2))}u</span></div>`; });
+        block.appendChild(grid); summaryEl.appendChild(block);
+      }
+
+      const steps: TreeNode[] = [];
+      collectSteps(tree, steps); steps.reverse();
+      if (steps.length > 0) {
+        const sb = document.createElement('div'); sb.className = 'summary-block';
+        sb.innerHTML = '<div class="section-label">mixing steps</div>';
+        const sl = document.createElement('div'); sl.className = 'steps-list';
+        steps.forEach((s, i) => {
+          const inputs = s.children.map((c) => `${parseFloat(c.amount.toFixed(2))}u ${c.name}`).join(', ');
+          const row = document.createElement('div'); row.className = 'step-row';
+          row.innerHTML = `<span class="step-num">${i + 1}.</span><div class="step-content"><div class="step-title">Mix ${parseFloat(s.amount.toFixed(2))}u ${s.name}</div><div class="step-detail">Combine: ${inputs}</div></div>`;
+          sl.appendChild(row);
+        });
+        sb.appendChild(sl); summaryEl.appendChild(sb);
+      }
+    }
+
+    document.getElementById('drink-select')!.addEventListener('change', render);
+    document.getElementById('units')!.addEventListener('input', render);
+    window.addEventListener('ss14:server-change', (e) => { loadDrinks((e as CustomEvent<{ server: string }>).detail.server); });
+    loadDrinks(getServer());
+  </script>
+</BaseLayout>
