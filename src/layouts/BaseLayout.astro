@@ -1,10 +1,19 @@
 ---
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import yaml from 'js-yaml';
+
 interface Props {
   title?: string;
   description?: string;
 }
 
 const { title = 'ss14lab', description = 'Community reference for Space Station 14' } = Astro.props;
+
+const serversYaml = yaml.load(
+  readFileSync(resolve('./src/data/servers.yaml'), 'utf8')
+) as { servers: { id: string; label: string }[] };
+const servers = serversYaml.servers;
 ---
 
 <!doctype html>
@@ -127,8 +136,9 @@ const { title = 'ss14lab', description = 'Community reference for Space Station 
       /* ── Search ──────────────────────────────────────────────────────────── */
       .nav-search-wrap {
         position: relative;
-        width: 280px;
-        flex-shrink: 0;
+        flex: 1;
+        min-width: 180px;
+        max-width: 480px;
         margin-left: auto;
       }
 
@@ -175,9 +185,9 @@ const { title = 'ss14lab', description = 'Community reference for Space Station 
 
       .search-result {
         display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 6px 8px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
         padding: 7px 12px;
         cursor: pointer;
         border-bottom: 0.5px solid var(--color-border-tertiary);
@@ -187,24 +197,34 @@ const { title = 'ss14lab', description = 'Community reference for Space Station 
       .search-result:hover, .search-result.focused {
         background: var(--color-background-tertiary);
       }
+      .sr-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+      }
+      .sr-body { align-items: flex-start; }
       .search-result-name {
         font-family: var(--font-mono);
         font-size: 12px;
         color: var(--color-text-primary);
         flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .search-result-name em {
         font-style: normal;
         color: var(--color-text-success);
       }
       .search-result-desc {
-        width: 100%;
         font-size: 11px;
         color: var(--color-text-tertiary);
         line-height: 1.4;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        flex: 1;
+        min-width: 0;
       }
       .search-result-desc em {
         font-style: normal;
@@ -217,7 +237,26 @@ const { title = 'ss14lab', description = 'Community reference for Space Station 
         padding: 1px 6px;
         border-radius: 100px;
         border: 0.5px solid var(--color-border-tertiary);
+        flex-shrink: 0;
       }
+      .sr-effects {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .sr-fx-col {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: flex-end;
+      }
+      .sr-heal, .sr-deal {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .sr-heal { color: var(--color-text-success); }
+      .sr-deal { color: var(--color-text-danger); }
       .search-empty {
         padding: 10px 12px;
         font-size: 12px;
@@ -328,10 +367,9 @@ const { title = 'ss14lab', description = 'Community reference for Space Station 
             <span class="server-pill-chevron">▾</span>
           </div>
           <div class="server-dropdown" id="server-dropdown">
-            <button class="server-option" data-server="delta-v">Delta-V</button>
-            <button class="server-option" data-server="wizden">Wizden</button>
-            <button class="server-option" data-server="den">Den</button>
-            <button class="server-option" data-server="cosmatic">Cosmatic</button>
+            {servers.map((s) => (
+              <button class="server-option" data-server={s.id}>{s.label}</button>
+            ))}
           </div>
         </div>
       </div>

@@ -1,0 +1,9 @@
+servers:
+  - id: wizden
+    label: Wizden
+  - id: delta-v
+    label: Delta-V
+  - id: den
+    label: Den
+  - id: cosmatic
+    label: Cosmatic

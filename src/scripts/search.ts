@@ -1,9 +1,16 @@
 import { load as yamlLoad } from 'js-yaml';
 import { getServer } from './server-store';
 
+interface ChemEffects {
+  heals?: Record<string, number>;
+  deals?: Record<string, number>;
+}
+
 interface SearchEntry {
   name: string;
   description: string;
+  tags: string[];
+  effects?: ChemEffects;
   type: 'chem' | 'drink' | 'food';
   page: string;
   paramKey: string;
@@ -21,9 +28,19 @@ async function loadSearchData(): Promise<SearchEntry[]> {
   try {
     const res = await fetch(`/data/chems/${server}.yaml`);
     if (res.ok) {
-      const parsed = yamlLoad(await res.text()) as { chems: Record<string, { description?: string }> } | null;
+      type RawEffects = { heals?: Record<string, number>; deals?: Record<string, number>; conditions?: string[] };
+      const parsed = yamlLoad(await res.text()) as { chems: Record<string, { description?: string; effects?: RawEffects }> } | null;
       for (const [name, data] of Object.entries(parsed?.chems ?? {})) {
-        entries.push({ name, description: data?.description ?? '', type: 'chem', page: '/chems', paramKey: 'chem', unitSuffix: 'u' });
+        const fx = data?.effects;
+        const tags: string[] = [
+          ...Object.keys(fx?.heals ?? {}).map((k) => `heals ${k}`),
+          ...Object.keys(fx?.deals ?? {}).map((k) => `deals ${k}`),
+          ...(fx?.conditions ?? []),
+        ];
+        const effects: ChemEffects | undefined = fx
+          ? { heals: fx.heals, deals: fx.deals }
+          : undefined;
+        entries.push({ name, description: data?.description ?? '', tags, effects, type: 'chem', page: '/chems', paramKey: 'chem', unitSuffix: 'u' });
       }
     }
   } catch {}
@@ -34,7 +51,7 @@ async function loadSearchData(): Promise<SearchEntry[]> {
     if (res.ok) {
       const parsed = yamlLoad(await res.text()) as { drinks: Record<string, { description?: string }> } | null;
       for (const [name, data] of Object.entries(parsed?.drinks ?? {})) {
-        entries.push({ name, description: data?.description ?? '', type: 'drink', page: '/drinks', paramKey: 'drink', unitSuffix: 'u' });
+        entries.push({ name, description: data?.description ?? '', tags: [], type: 'drink', page: '/drinks', paramKey: 'drink', unitSuffix: 'u' });
       }
     }
   } catch {}
@@ -45,13 +62,25 @@ async function loadSearchData(): Promise<SearchEntry[]> {
     if (res.ok) {
       const parsed = yamlLoad(await res.text()) as { food: Record<string, { description?: string }> } | null;
       for (const [name, data] of Object.entries(parsed?.food ?? {})) {
-        entries.push({ name, description: data?.description ?? '', type: 'food', page: '/food', paramKey: 'item', unitSuffix: '' });
+        entries.push({ name, description: data?.description ?? '', tags: [], type: 'food', page: '/food', paramKey: 'item', unitSuffix: '' });
       }
     }
   } catch {}
 
   searchCache = entries;
   return entries;
+}
+
+function rankEntry(e: SearchEntry, ql: string): number {
+  if (e.name.toLowerCase().includes(ql)) return 3;
+  if (e.tags.some((t) => t.toLowerCase().startsWith('heals ') && t.toLowerCase().includes(ql))) return 2;
+  if (e.tags.some((t) => !t.toLowerCase().startsWith('heals ') && t.toLowerCase().includes(ql))) return 1;
+  return 0; // description match
+}
+
+function fmtNum(n: number): string {
+  const r = Math.round(n * 10) / 10;
+  return r % 1 === 0 ? String(r) : r.toFixed(1);
 }
 
 function highlight(text: string, query: string): string {
@@ -104,7 +133,12 @@ export function initSearch(): void {
     const entries = await loadSearchData();
     const ql = q.toLowerCase();
     const matches = entries
-      .filter((e) => e.name.toLowerCase().includes(ql) || e.description.toLowerCase().includes(ql))
+      .filter((e) =>
+        e.name.toLowerCase().includes(ql) ||
+        e.description.toLowerCase().includes(ql) ||
+        e.tags.some((t) => t.toLowerCase().includes(ql))
+      )
+      .sort((a, b) => rankEntry(b, ql) - rankEntry(a, ql))
       .slice(0, 8);
 
     if (matches.length === 0) {
@@ -113,22 +147,47 @@ export function initSearch(): void {
       return;
     }
 
+    const unitAmount = amount ? parseFloat(amount) : 1;
+
     searchDropdown.innerHTML = matches
-      .map(
-        (entry) => {
-          const params = new URLSearchParams({ [entry.paramKey]: entry.name });
-          if (amount) params.set('units', amount);
-          const amtLabel = amount ? `${amount}${entry.unitSuffix}` : '';
-          const nameMatch = entry.name.toLowerCase().includes(ql);
-          const descSnippet = !nameMatch && entry.description ? highlight(entry.description, q) : '';
-          return `<a class="search-result" href="${entry.page}?${params.toString()}">
-            <span class="search-result-name">${nameMatch ? highlight(entry.name, q) : entry.name}</span>
-            ${descSnippet ? `<span class="search-result-desc">${descSnippet}</span>` : ''}
-            ${amtLabel ? `<span class="search-result-tag">${amtLabel}</span>` : ''}
-            <span class="search-result-tag">${entry.type}</span>
-          </a>`;
-        },
-      )
+      .map((entry) => {
+        const params = new URLSearchParams({ [entry.paramKey]: entry.name });
+        if (amount) params.set('units', amount);
+
+        const nameMatch = entry.name.toLowerCase().includes(ql);
+        const descMatch = entry.description.toLowerCase().includes(ql);
+
+        // Row 1: name + type pill
+        const nameHtml = nameMatch ? highlight(entry.name, q) : entry.name;
+        const headerHtml = `<div class="sr-row">
+          <span class="search-result-name">${nameHtml}</span>
+          <span class="search-result-tag">${entry.type}</span>
+        </div>`;
+
+        // Row 2: description (left) + effects (right)
+        const descHtml = entry.description
+          ? `<span class="search-result-desc">${descMatch ? highlight(entry.description, q) : entry.description}</span>`
+          : '';
+
+        let effectsHtml = '';
+        if (entry.effects) {
+          const healSpans = Object.entries(entry.effects.heals ?? {})
+            .map(([type, rate]) => `<span class="sr-heal">\u2212${fmtNum(rate * unitAmount)} ${type}</span>`)
+            .join('');
+          const dealSpans = Object.entries(entry.effects.deals ?? {})
+            .map(([type, rate]) => `<span class="sr-deal">+${fmtNum(rate * unitAmount)} ${type}</span>`)
+            .join('');
+          if (healSpans || dealSpans) {
+            effectsHtml = `<div class="sr-effects">${healSpans ? `<div class="sr-fx-col">${healSpans}</div>` : ''}${dealSpans ? `<div class="sr-fx-col">${dealSpans}</div>` : ''}</div>`;
+          }
+        }
+
+        const bodyHtml = (descHtml || effectsHtml)
+          ? `<div class="sr-row sr-body">${descHtml}${effectsHtml}</div>`
+          : '';
+
+        return `<a class="search-result" href="${entry.page}?${params.toString()}">${headerHtml}${bodyHtml}</a>`;
+      })
       .join('');
     searchDropdown.classList.add('open');
   });

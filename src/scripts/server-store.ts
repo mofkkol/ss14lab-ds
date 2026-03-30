@@ -1,6 +1,4 @@
 export const STORAGE_KEY = 'ss14lab_server';
-export const SERVERS = ['delta-v', 'wizden', 'den', 'cosmatic'] as const;
-export type Server = (typeof SERVERS)[number];
 
 export function getServer(): string {
   return localStorage.getItem(STORAGE_KEY) || 'delta-v';

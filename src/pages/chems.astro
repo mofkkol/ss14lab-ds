@@ -452,7 +452,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         if (fx.heals && Object.keys(fx.heals).length > 0) {
           fxHTML += '<div class="info-label">heals (' + units + 'u)</div><div class="fx-grid">';
           for (const [type, rate] of Object.entries(fx.heals)) {
-            fxHTML += `<div class="fx-entry"><span class="fx-name">${type}</span><span class="fx-val fx-heal">+${parseFloat((rate * units).toFixed(1))}</span></div>`;
+            fxHTML += `<div class="fx-entry"><span class="fx-name">${type}</span><span class="fx-val fx-heal">\u2212${parseFloat((rate * units).toFixed(1))}</span></div>`;
           }
           fxHTML += '</div>';
         }
@@ -460,7 +460,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         if (fx.deals && Object.keys(fx.deals).length > 0) {
           fxHTML += '<div class="info-label" style="margin-top:8px">deals (' + units + 'u)</div><div class="fx-grid">';
           for (const [type, rate] of Object.entries(fx.deals)) {
-            fxHTML += `<div class="fx-entry"><span class="fx-name">${type}</span><span class="fx-val fx-deal">-${parseFloat((rate * units).toFixed(1))}</span></div>`;
+            fxHTML += `<div class="fx-entry"><span class="fx-name">${type}</span><span class="fx-val fx-deal">+${parseFloat((rate * units).toFixed(1))}</span></div>`;
           }
           fxHTML += '</div>';
         }
